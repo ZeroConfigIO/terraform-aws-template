@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-yaml
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: detect-aws-credentials
+        args: ["--allow-missing-credentials"]
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        files: \.tf$
+
+  - repo: https://github.com/pecigonzalo/pre-commit-terraform-vars
+    rev: v1.0.0
+    hooks:
+      - id: terraform-vars
+        name: unused vars
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.1.0
+    hooks:
+      - id: detect-secrets
+        name: detect secrets
+        args: ["--baseline", ".secrets.baseline"]
+
+  - repo: local
+    hooks:
+      - id: docker-terraform-tfsec
+        name: check security
+        language: docker_image
+        entry: --platform=linux/amd64 aquasec/tfsec:latest
+        files: \.tf$
+
+      - id: docker-terraform-tflint
+        name: lint terraform files
+        language: docker_image
+        entry: --platform=linux/amd64 ghcr.io/terraform-linters/tflint-bundle:latest
+        files: \.tf$
